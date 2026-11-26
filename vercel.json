@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "src/ResultStudent.Api/wwwroot",
+  "rewrites": [
+    {
+      "source": "/((?!css/|js/|favicon\\.svg|favicon\\.png|api/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
