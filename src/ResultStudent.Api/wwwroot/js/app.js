@@ -1693,7 +1693,9 @@
     state.route = initialRoute;
     syncTitle(initialRoute);
     render();
+  }
 
+  function hideSplash() {
     const splash = document.getElementById('splash-screen');
     if (splash) {
       setTimeout(() => {
@@ -1703,7 +1705,9 @@
     }
   }
 
-  init().catch(err => {
-    appEl.innerHTML = `<div class="page-pad"><div class="white-card">Failed to load: ${escapeHtml(err.message)}</div></div>`;
-  });
+  init()
+    .catch(err => {
+      appEl.innerHTML = `<div class="page-pad"><div class="white-card">Failed to load: ${escapeHtml(err.message)}</div></div>`;
+    })
+    .finally(hideSplash);
 })();
