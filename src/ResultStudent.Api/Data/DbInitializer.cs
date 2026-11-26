@@ -34,14 +34,14 @@ public static class DbInitializer
         {
             var student = new Student
             {
-                FirstName = "Behruz",
-                LastName = "Sagdullayev",
-                PhoneNumber = "+998 (99) 191 93 77",
+                FirstName = "Azizbek",
+                LastName = "Karimov",
+                PhoneNumber = "+998 (90) 452 18 64",
                 PasswordHash = PasswordService.Hash("123456"),
                 Branch = "Saxovat",
                 Level = "N/A",
                 Status = "Studying",
-                Birthday = "02.07.2010",
+                Birthday = "14.05.2008",
                 MonthlyLessonLimit = 12
             };
             db.Students.Add(student);

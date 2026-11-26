@@ -3,7 +3,7 @@
   "outputDirectory": "src/ResultStudent.Api/wwwroot",
   "rewrites": [
     {
-      "source": "/((?!css/|js/|favicon\\.svg|favicon\\.png|api/).*)",
+      "source": "/((?!css/|js/|data/|favicon\\.svg|favicon\\.png|api/).*)",
       "destination": "/index.html"
     }
   ]

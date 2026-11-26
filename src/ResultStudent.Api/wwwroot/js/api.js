@@ -1,19 +1,31 @@
 window.Api = (() => {
   const TOKEN_KEY = 'result_student_jwt';
   let offlineMode = false;
+  let vocabCache = null;
+
+  async function loadVocabCache() {
+    if (vocabCache) return vocabCache;
+    try {
+      const res = await fetch('/data/vocabulary.json');
+      vocabCache = res.ok ? await res.json() : [];
+    } catch {
+      vocabCache = [];
+    }
+    return vocabCache;
+  }
 
   const fallbackStore = {
     profile: {
       id: 1,
-      firstName: 'Behruz',
-      lastName: 'Sagdullayev',
-      fullName: 'Behruz Sagdullayev',
-      initials: 'BS',
-      phoneNumber: '+998 (99) 191 93 77',
+      firstName: 'Azizbek',
+      lastName: 'Karimov',
+      fullName: 'Azizbek Karimov',
+      initials: 'AK',
+      phoneNumber: '+998 (90) 452 18 64',
       branch: 'Saxovat',
       level: 'N/A',
       status: 'Studying',
-      birthday: '02.07.2010',
+      birthday: '14.05.2008',
       instagram: null,
       telegram: null,
       location: null,
@@ -48,7 +60,7 @@ window.Api = (() => {
       { id: 10, status: 'Available', title: 'Book a lesson · Nov 23–29', subtitle: 'You can book a lesson for this slot.' }
     ],
     payments: {
-      studentName: 'BEHRUZ SAGDULLAYEV',
+      studentName: 'AZIZBEK KARIMOV',
       currentBalance: 0,
       totalDeposited: 1345000,
       totalCharged: 1345000,
@@ -76,7 +88,7 @@ window.Api = (() => {
     else localStorage.removeItem(TOKEN_KEY);
   }
 
-  function handleOffline(url, options = {}) {
+  async function handleOffline(url, options = {}) {
     const method = (options.method || 'GET').toUpperCase();
     const body = options.body ? JSON.parse(options.body) : {};
     const u = new URL(url, window.location.origin);
@@ -154,8 +166,37 @@ window.Api = (() => {
       fallbackStore.referrals.unshift(r);
       return r;
     }
-    if (path === '/api/resources/vocabulary/counts') return [];
-    if (path === '/api/resources/vocabulary/units') return [];
+    if (path === '/api/resources/vocabulary/counts') {
+      const all = await loadVocabCache();
+      const map = {};
+      all.forEach(w => { map[w.level] = (map[w.level] || 0) + 1; });
+      return Object.entries(map).map(([level, count]) => ({ level, count }));
+    }
+    if (path === '/api/resources/vocabulary/units') {
+      const all = await loadVocabCache();
+      const lvl = (u.searchParams.get('level') || '').toLowerCase();
+      const map = new Map();
+      all.filter(w => w.level.toLowerCase() === lvl).forEach(w => {
+        map.set(w.unit, (map.get(w.unit) || 0) + 1);
+      });
+      return Array.from(map.entries()).map(([unit, count]) => ({ unit, count }));
+    }
+    if (path === '/api/resources/vocabulary') {
+      const all = await loadVocabCache();
+      const lvl = (u.searchParams.get('level') || '').toLowerCase();
+      const unit = (u.searchParams.get('unit') || '').toLowerCase();
+      const pos = (u.searchParams.get('pos') || 'all').toLowerCase();
+      return all.filter(w => {
+        if (lvl && w.level.toLowerCase() !== lvl) return false;
+        if (unit && w.unit.toLowerCase() !== unit) return false;
+        if (pos && pos !== 'all') {
+          const wp = (w.partOfSpeech || '').toLowerCase();
+          if (pos === 'verb') return wp === 'verb' || wp === 'phr v';
+          return wp === pos;
+        }
+        return true;
+      });
+    }
     if (path.startsWith('/api/resources/')) return [];
     return {};
   }

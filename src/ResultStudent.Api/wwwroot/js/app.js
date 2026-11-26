@@ -1586,7 +1586,7 @@
             </div>
             <div class="field-group">
               <label class="field-label">Phone Number</label>
-              <input class="input-box" name="phoneNumber" value="+998 (99) 191 93 77" required />
+              <input class="input-box" name="phoneNumber" value="+998 (90) 452 18 64" required />
             </div>
             <div class="field-group">
               <label class="field-label">Password</label>
